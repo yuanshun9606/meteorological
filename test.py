@@ -13,9 +13,15 @@ f_test = xr.open_dataset('air.mon.mean.nc')  # 1948-2017 1月平均气温
 # print(f_test) # nc数据信息
 air = f_test['air']  # 抽取变量air
 # print(air)
-a = air.isel(level=1).mean(dim='time') #索引
+
+a = air.isel(level=1).mean(dim='time')  # 索引
+b=a.isel(lon=0)
 # print(a)
 
+b.coords['lon']=360
+print(b)
+c = xr.concat([a,b],dim='lon')
+print(c)
 #  basemap地图测试
 # plt.figure(figsize=(8, 8))
 #
@@ -24,7 +30,7 @@ a = air.isel(level=1).mean(dim='time') #索引
 # m.bluemarble(scale=0.5)
 
 proj = ccrs.PlateCarree()  # 创建投影
-fig = plt.figure(figsize=(20, 10),dpi=80)  # 创建页面
+fig = plt.figure(figsize=(15, 8), dpi=80)  # 创建页面
 ax = fig.subplots(1, 1, subplot_kw={'projection': proj})  # 子图
 # 设置地图属性
 ax.add_feature(cfeat.BORDERS.with_scale('50m'), linewidth=0.8, zorder=1)
@@ -38,6 +44,7 @@ gl.toplabels_top = False  # 关闭顶端标签
 gl.rightlabels_right = False  # 关闭右侧标签
 gl.xformatter = LONGITUDE_FORMATTER  # x轴设为经度格式
 gl.yformatter = LATITUDE_FORMATTER  # y轴设为纬度格式
+
 # 设置colorbar
 cbar_kwargs = {
     'orientation': 'horizontal',
@@ -45,8 +52,9 @@ cbar_kwargs = {
     'shrink': 0.8,
     'ticks': np.arange(-30, 30 + 5, 5)
 }
-levels = np.arange(-30,30+1,1)
-a.plot.contourf(ax=ax, levels=levels, cmap='Spectral_r',
-    cbar_kwargs=cbar_kwargs, transform=ccrs.PlateCarree())
+levels = np.arange(-30, 30 + 1, 1)
 
+c.plot.contourf(ax=ax, levels=levels, cmap='Spectral_r',
+    cbar_kwargs=cbar_kwargs, transform=ccrs.PlateCarree())
 plt.show()
+# plt.savefig('cartopytest.png')
