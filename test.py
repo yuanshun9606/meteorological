@@ -3,11 +3,12 @@ import scipy
 from matplotlib import pyplot as plt
 from netCDF4 import Dataset, num2date
 import datetime
-# from mpl_toolkits.basemap import Basemap #不能和cartopy同时导入
+# from mpl_toolkits.basemap import  Basemap #不能和cartopy同时导入
 import xarray as xr
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+np.set_printoptions(suppress=True) # 关闭科学计数法
 
 f_test = xr.open_dataset('air.mon.mean.nc')  # 1948-2017 1月平均气温
 # print(f_test) # nc数据信息
@@ -54,7 +55,7 @@ cbar_kwargs = {
 }
 levels = np.arange(-30, 30 + 1, 1)
 
-c.plot.contourf(ax=ax, levels=levels, cmap='Spectral_r',
-    cbar_kwargs=cbar_kwargs, transform=ccrs.PlateCarree())
+c.plot.contourf(ax=ax, levels=levels,cbar_kwargs=cbar_kwargs, cmap='Spectral_r',
+     transform=ccrs.PlateCarree())
 plt.show()
-# plt.savefig('cartopytest.png')
+# plt.savefig('cartopytest1.png')

@@ -1,0 +1,2 @@
+'reinit'
+'sdfopen D:\mywork\meteorological\sx\stat\sx1.nc'

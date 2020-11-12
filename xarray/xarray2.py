@@ -7,17 +7,17 @@ import matplotlib.pyplot as plt
 
 
 def mask(ds, label='land'):
-    landsea = xr.open_dataset('landsea.nc').sel(time='1989-01-01T12:00:00') #降维处理
-    landsea=landsea['lsm']
+    landsea = xr.open_dataset('landsea.nc').sel(time='1989-01-01T12:00:00')['lsm'] #降维处理
+
     # --ds和地形数据分辨率不一致，需将地形数据插值
     landsea = landsea.interp(latitude=ds.lat.values, longitude=ds.lon.values)
     # --利用地形掩盖海陆数据
     ds.coords['mask'] = (('lat', 'lon'), landsea.values)
 
     if label == 'land':
-        ds = ds.where(ds.mask < 0.8)
+        ds = ds.where(ds.mask < 1)
     elif label == 'ocean':
-        ds = ds.where(ds.mask > 0.2)
+        ds = ds.where(ds.mask > 0)
     return ds
 
 
@@ -57,10 +57,15 @@ if __name__ == '__main__':
 
     temp_mask = mask(temp_region, 'ocean')
     # --画图
+    # 图例
     cbar_kwargs = {
         'label': '2m temperature (℃)',
         'ticks': np.arange(-30, 30 + 5, 5), }
+
+
     levels = np.arange(0, 50 + 1, 1)
     temp_mask.plot.contourf(ax=ax, levels=levels, cmap='Spectral_r', cbar_kwargs=cbar_kwargs,
                             transform=ccrs.PlateCarree())
     fig.show()
+    # plt.savefig('xarray.png')
+    print(ds.Coordinates)
